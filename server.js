@@ -7,6 +7,24 @@ YAML = require('yamljs');
 nativeObject = YAML.load('database.yml',(result)=>{
     console.log("Loaded YAML", result);
 
+
+    app.get("/user/:id",(req,res)=>{
+        const id = req.params.id;
+        const user = result.users.find(user=>user.id === id);
+        if (!user) {
+            return res
+                .status(500)
+                .json({
+                    error:"No user with the specified ID",
+                    id
+                })
+        } else {
+            res
+                .status(200)
+                .json(user)
+        }
+    })
+
     app.get("/items/:ids",(req,res)=>{
         const ids = req.params.ids.split(',');
         const items = ids.map(id=>result.items.find(item=>item.id===id));
