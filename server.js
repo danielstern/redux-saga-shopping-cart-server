@@ -24,7 +24,7 @@ nativeObject = YAML.load('database.yml',(database)=>{
         }
     });
 
-    app.get("/cart/add/:owner/:itemID",(req,res)=>{
+    const makeCartAdjustmentRoute = (shouldAdd = true) => (req,res)=>{
         const { owner, itemID } = req.params;
         const cart = database.carts.find(cart=>cart.owner === owner);
         if (!cart) {
@@ -50,17 +50,33 @@ nativeObject = YAML.load('database.yml',(database)=>{
         // console.log("Cart?",cart);
         const existingItem = cart.items.find(cartItem=>cartItem.id === itemID);
         if (existingItem) {
-            existingItem.quantity += 1;
+            existingItem.quantity += (shouldAdd ? 1 : -1);
+            if (existingItem.quantity === 0) {
+                cart.items = cart.items.filter(item=>item.id !== itemID);
+            }
         } else {
-            cart.items.push({
-                quantity:1,
-                id:itemID
-            })
+            if (shouldAdd) {
+                cart.items.push({
+                    quantity:1,
+                    id:itemID
+                })
+            } else {
+                return res.status(500)
+                    .json({
+                        error:"No item with the specified ID exists in the cart to be removed",
+                        owner,
+                        itemID
+                    })
+            }
+
         }
         res
             .status(200)
             .send(cart);
-    });
+    }
+
+    app.get("/cart/add/:owner/:itemID",makeCartAdjustmentRoute(true));
+    app.get("/cart/remove/:owner/:itemID",makeCartAdjustmentRoute(false));
 
     app.get("/items/:ids",(req,res)=>{
         const ids = req.params.ids.split(',');
