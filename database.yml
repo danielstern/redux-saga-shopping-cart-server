@@ -1,0 +1,52 @@
+users:
+- id: U10000
+  name: J.R.R Hemingway
+  country: Canada
+
+carts:
+- owner: U10000
+  items:
+  - id: I10000
+    quantity: 2
+  - id: I20000
+    quantity: 1
+  - id: I40000
+    quantity: 3
+
+items:
+- id: I10000
+  name: Velvet Mousepad
+  description: Your mouse never had it so good.
+  usd: 129.95,
+  cad: 175.85
+  img: velvet-mousepad.png,
+  quantityAvailable: 100000
+
+- id: I20000
+  name: Wood-Grain USB Cable
+  description: This cable matches any mahogany or oak-based computer chassis.
+  usd: 35.50
+  cad: 55.60
+  img: usb-cable.png
+  quantityAvailable: 3
+
+- id: I30000
+  name: 1 Year Subscription - JavaScript Enthusiast Magazine
+  description: Finally, JavaScript news, delivered right to your front door!
+  usd: 119.15,
+  cad: 119.15
+  quantityAvailable: 99999
+
+- id: I40000
+  name: Teaching Computers to Golf, 1st Edition
+  description: Don't try to teach your Mac or PC how to play golf without it.
+  usd: 15.95,
+  cad: 22.95,
+  quantityAvailable: 0
+
+- id: I50000
+  name: I <3 Yield Pin
+  description: Show your friends how much you love JavaScript's newest keyword!
+  usd: 1.95,
+  cad: 2.95,
+  quantityAvailable: 50000
