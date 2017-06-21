@@ -144,6 +144,46 @@ nativeObject = YAML.load('database.yml',(database)=>{
            })
     });
 
+    app.get('/shipping/:items',(req,res)=>{
+        const ids = req.params.items.split(',');
+        let total = 0;
+        ids.forEach(id=>{
+            const item = database.items.find(item=>item.id === id);
+            if (item.weight === 0) {
+                total += 0;
+            } else if (item.weight < 0.5) {
+                total += 3.5;
+            } else {
+                total += 8.5;
+            }
+        });
+        res
+            .status(200)
+            .json({
+                total
+            });
+    });
+
+    app.get('/tax/:symbol',(req,res)=>{
+        const { symbol } = req.params;
+        const taxRate = database.taxRates.find(rate=>rate.symbol === symbol);
+        if (!taxRate) {
+            return res
+                .status(500)
+                .json({
+                    symbol,
+                    error:"No tax rate info for symbol " + symbol
+                });
+        }
+
+        res
+            .status(200)
+            .json({
+                rate:taxRate.rate
+            })
+
+    });
+
     app.listen(port,()=>{
         console.log(`Redux Saga Cart backend server is listening on ${port}`)
     });

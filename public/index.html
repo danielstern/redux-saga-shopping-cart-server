@@ -1,14 +1,18 @@
-<title>
-    Redux Cart Server
-</title>
+<head>
+    <title>
+        Redux Cart Server
+    </title>
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+</head>
 <h2>About</h2>
 <p>
     A demo REST API to integrate with a Redux Saga shopping cart app.
 </p>
+<body class="container">
 <h3>
     Routes
 </h3>
-<table>
+<table class="table">
     <tr>
         <th>
             route
@@ -21,44 +25,52 @@
         </th>
     </tr>
     <tr>
-        <th>
+        <td>
             User
-        </th>
-        <th>
-            /user/:id
-        </th>
-        <th>
+        </td>
+        <td>
+            <a href="/user/U10000">
+                /user/:id
+            </a>
+        </td>
+        <td>
             Returns data on the given user ID
-        </th>
+        </td>
     </tr>
     <tr>
-        <th>
+        <td>
             Cart Add Item
-        </th>
-        <th>
-            /cart/add/:owner/:itemID
-        </th>
-        <th>
+        </td>
+        <td>
+            <a href="/cart/add/U10000/I10000">
+                /cart/add/:owner/:itemID
+            </a>
+        </td>
+        <td>
             Adds an item to the specified owner's cart with the specified ID.
-        </th>
+        </td>
     </tr>
     <tr>
-        <th>
+        <td>
             Cart Remove Item
-        </th>
-        <th>
-            /cart/remove/:owner/:itemID
-        </th>
-        <th>
+        </td>
+        <td>
+            <a href="/cart/remove/U10000/I10000">
+                /cart/remove/:owner/:itemID
+            </a>
+        </td>
+        <td>
             Removes one unit of the specified item from the specified owner's cart.
-        </th>
+        </td>
     </tr>
     <tr>
         <td>
             Items
         </td>
         <td>
-            /items/:ids
+            <a href="/items/I10000,I20000">
+                /items/:ids
+            </a>
         </td>
         <td>
             Returns metadata for a collection of comma-separated item IDS.
@@ -69,7 +81,9 @@
             Prices
         </td>
         <td>
-            /prices/:symbol/:ids
+            <a href="/prices/CAD/I30000">
+                /prices/:symbol/:ids
+            </a>
         </td>
         <td>
             Returns the prices of the specified items in the specified symbol
@@ -77,7 +91,33 @@
     </tr>
     <tr>
         <td>
-            Checkout
+            Shipping
+        </td>
+        <td>
+            <a href="/shipping/I30000,I50000">
+                /shipping/:ids
+            </a>
+        </td>
+        <td>
+            Calculates the shipping costs for a block of item IDS.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Tax
+        </td>
+        <td>
+            <a href="/tax/USD">
+                /tax/:symbol
+            </a>
+        </td>
+        <td>
+            Returns the tax rate for the given currency or an <a href="/tax/FRA">error</a> if one can't be found.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Checkout (TBC)
         </td>
         <td>
             /checkout/:owner
@@ -90,3 +130,4 @@
 
     </tr>
 </table>
+</body>
