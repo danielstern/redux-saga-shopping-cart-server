@@ -4,6 +4,14 @@ const port = 8081;
 const app = new express();
 YAML = require('yamljs');
 
+// Simulate a small amount of delay to demonstrate app's async features
+app.use((req,res,next)=>{
+    const delay = 108;
+    setTimeout(next,delay);
+});
+
+app.use(express.static('public'));
+
 nativeObject = YAML.load('database.yml',(database)=>{
     console.log("Loaded YAML", database);
 
@@ -47,7 +55,6 @@ nativeObject = YAML.load('database.yml',(database)=>{
                 })
         }
 
-        // console.log("Cart?",cart);
         const existingItem = cart.items.find(cartItem=>cartItem.id === itemID);
         if (existingItem) {
             existingItem.quantity += (shouldAdd ? 1 : -1);
@@ -125,6 +132,16 @@ nativeObject = YAML.load('database.yml',(database)=>{
                     price:symbol === "USD" ? item.usd : item.cad
                 })));
         }
+    });
+
+    app.get('/checkout/:owner',(req,res)=>{
+       const { owner } = req.params;
+       res.
+           status(405)
+           .json({
+               error:"Route not implemented",
+               owner
+           })
     });
 
     app.listen(port,()=>{

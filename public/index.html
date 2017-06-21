@@ -1,0 +1,92 @@
+<title>
+    Redux Cart Server
+</title>
+<h2>About</h2>
+<p>
+    A demo REST API to integrate with a Redux Saga shopping cart app.
+</p>
+<h3>
+    Routes
+</h3>
+<table>
+    <tr>
+        <th>
+            route
+        </th>
+        <th>
+            url
+        </th>
+        <th>
+            about
+        </th>
+    </tr>
+    <tr>
+        <th>
+            User
+        </th>
+        <th>
+            /user/:id
+        </th>
+        <th>
+            Returns data on the given user ID
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Cart Add Item
+        </th>
+        <th>
+            /cart/add/:owner/:itemID
+        </th>
+        <th>
+            Adds an item to the specified owner's cart with the specified ID.
+        </th>
+    </tr>
+    <tr>
+        <th>
+            Cart Remove Item
+        </th>
+        <th>
+            /cart/remove/:owner/:itemID
+        </th>
+        <th>
+            Removes one unit of the specified item from the specified owner's cart.
+        </th>
+    </tr>
+    <tr>
+        <td>
+            Items
+        </td>
+        <td>
+            /items/:ids
+        </td>
+        <td>
+            Returns metadata for a collection of comma-separated item IDS.
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Prices
+        </td>
+        <td>
+            /prices/:symbol/:ids
+        </td>
+        <td>
+            Returns the prices of the specified items in the specified symbol
+        </td>
+    </tr>
+    <tr>
+        <td>
+            Checkout
+        </td>
+        <td>
+            /checkout/:owner
+        </td>
+        <td>
+            Purchases all the items in the cart, or purchases none of the items in the cart if any errors occur.
+        </td>
+    </tr>
+    <tr>
+
+    </tr>
+</table>
