@@ -6,15 +6,14 @@ YAML = require('yamljs');
 
 // Simulate a small amount of delay to demonstrate app's async features
 app.use((req,res,next)=>{
-    const delay = 108;
+    const delay = 750;
     setTimeout(next,delay);
 });
 
 app.use(express.static('public'));
 
 nativeObject = YAML.load('database.yml',(database)=>{
-    console.log("Loaded YAML", database);
-
+   
     app.get("/user/:id",(req,res)=>{
         const id = req.params.id;
         const user = database.users.find(user=>user.id === id);
@@ -31,6 +30,21 @@ nativeObject = YAML.load('database.yml',(database)=>{
                 .json(user)
         }
     });
+	
+	app.get("/cart/:owner",(req,res)=>{
+		const { owner } = req.params;
+		const cart = database.carts.find(cart=>cart.owner === owner);
+		if (!cart){
+			return res
+				.status(500)
+				.json({error:"No cart with the specified owner",owner});
+		}
+		else {
+			res
+				.status(200)
+				.json(cart);
+		}
+	});
 
     const makeCartAdjustmentRoute = (shouldAdd = true) => (req,res)=>{
         const { owner, itemID } = req.params;
