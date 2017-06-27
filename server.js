@@ -6,7 +6,7 @@ YAML = require('yamljs');
 
 // Simulate a small amount of delay to demonstrate app's async features
 app.use((req,res,next)=>{
-    const delay = 750;
+    const delay = Math.random() * 1500 + 500;
     setTimeout(next,delay);
 });
 
@@ -69,8 +69,16 @@ nativeObject = YAML.load('database.yml',(database)=>{
                 })
         }
 
+	
         const existingItem = cart.items.find(cartItem=>cartItem.id === itemID);
         if (existingItem) {
+			if (shouldAdd && parseInt(existingItem.quantity) >= parseInt(item.quantityAvailable)) {
+				return res.status(503)
+				.json({
+					error:"An insufficient quantity of items remains.",
+					itemID
+				});
+			}
             existingItem.quantity += (shouldAdd ? 1 : -1);
             if (existingItem.quantity === 0) {
                 cart.items = cart.items.filter(item=>item.id !== itemID);
@@ -109,12 +117,13 @@ nativeObject = YAML.load('database.yml',(database)=>{
         } else {
             res
                 .status(200)
-                .json(items.map(item=>({
-                    id: item.id,
-                    description:item.description,
-                    name: item.name,
-                    img: item.img
-                })));
+                //.json(items.map(item=>({
+                //    id: item.id,
+                //    description:item.description,
+                //    name: item.name,
+                //    img: item.img
+                //})));
+				.json(items);
         }
     });
 
