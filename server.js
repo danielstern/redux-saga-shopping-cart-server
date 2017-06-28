@@ -7,6 +7,7 @@ YAML = require('yamljs');
 // Simulate a small amount of delay to demonstrate app's async features
 app.use((req,res,next)=>{
     const delay = Math.random() * 1500 + 500;
+//	const delay = 50;
     setTimeout(next,delay);
 });
 
@@ -76,7 +77,8 @@ nativeObject = YAML.load('database.yml',(database)=>{
 				return res.status(503)
 				.json({
 					error:"An insufficient quantity of items remains.",
-					itemID
+					itemID,
+					quantityAvailable:item.quantityAvailable
 				});
 			}
             existingItem.quantity += (shouldAdd ? 1 : -1);

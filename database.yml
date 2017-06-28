@@ -10,7 +10,7 @@ cards:
 - id: C10000
   owner: U10000
   number: 4500123456787777
-  availableFunds: 400.50
+  availableFunds: 1000
 
 carts:
 - owner: U10000
@@ -54,7 +54,7 @@ items:
   description: Don't try to teach your Mac or PC how to play golf without it.
   usd: 15.95
   cad: 22.95
-  quantityAvailable: 0
+  quantityAvailable: 5
   weight: 0.5
 
 - id: I50000
@@ -62,7 +62,7 @@ items:
   description: Show your friends how much you love JavaScript's newest keyword!
   usd: 1.95
   cad: 2.95
-  quantityAvailable: 50000
+  quantityAvailable: 0
   weight: 0.1
 
 taxRates:
