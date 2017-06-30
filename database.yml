@@ -14,7 +14,7 @@ cards:
 - id: C10000
   owner: U10000
   number: 4500123456787777
-  availableFunds: 1000
+  availableFunds: 500
 
 carts:
 - owner: U10000

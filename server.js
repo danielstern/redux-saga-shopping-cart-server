@@ -4,78 +4,18 @@ const port = 8081;
 const app = new express();
 YAML = require('yamljs');
 
+const serverDelayConstant = 10;
 // Simulate a small amount of delay to demonstrate app's async features
 app.use((req,res,next)=>{
-    const delay = Math.random() * 1500 + 500;
-//	const delay = 50;
+    const delay = (Math.random() * 15 + 5) * serverDelayConstant;
     setTimeout(next,delay);
 });
 
 app.use(express.static('public'));
 
 nativeObject = YAML.load('database.yml',(database)=>{
-   
-    app.get("/user/:id",(req,res)=>{
-        const id = req.params.id;
-        const user = database.users.find(user=>user.id === id);
-        if (!user) {
-            return res
-                .status(500)
-                .json({
-                    error:"No user with the specified ID",
-                    id
-                })
-        } else {
-            res
-                .status(200)
-                .json(user)
-        }
-    });
 	
-	app.use(["/cart/validate/:owner","/cart/:owner"],(req,res,next)=>{
-		const { owner } = req.params;
-		const cart = database.carts.find(cart=>cart.owner === owner);
-		if (!cart){
-			return res
-				.status(500)
-				.json({error:"No cart with the specified owner",owner});
-		}
-		else {
-			console.log("Cart middleware...",cart);
-			req.cart = cart;
-			next();
-		}
-	});
-	
-	app.get("/cart/validate/:owner",(req,res)=>{
-		const { items } = req.cart;		
-		let validated = true;
-		let error = null;
-		console.log("validating cart...",items,database);
-		items.forEach(({id,quantity})=>{
-			const item = database.items.find(item => item.id === id);
-			if (item.quantityAvailable < quantity) {
-				validated = false;
-				error = "There is an insufficient quantity of " + id;
-			}
-		});;
-		res
-			.status(200)
-			.json({validated,error});
-		
-	});
-	
-	
-	app.get("/cart/:owner",(req,res)=>{
-		const cart = req.cart;
-		res
-			.status(200)
-			.json(cart);
-		
-	});
-	
-
-    const makeCartAdjustmentRoute = (shouldAdd = true) => (req,res)=>{
+	const makeCartAdjustmentRoute = (shouldAdd = true) => (req,res)=>{
         const { owner, itemID } = req.params;
         const cart = database.carts.find(cart=>cart.owner === owner);
         if (!cart) {
@@ -136,6 +76,109 @@ nativeObject = YAML.load('database.yml',(database)=>{
 
     app.get("/cart/add/:owner/:itemID",makeCartAdjustmentRoute(true));
     app.get("/cart/remove/:owner/:itemID",makeCartAdjustmentRoute(false));
+   
+    app.get("/user/:id",(req,res)=>{
+        const id = req.params.id;
+        const user = database.users.find(user=>user.id === id);
+        if (!user) {
+            return res
+                .status(500)
+                .json({
+                    error:"No user with the specified ID",
+                    id
+                })
+        } else {
+            res
+                .status(200)
+                .json(user)
+        }
+    });
+	
+	app.use(["/cart/validate/:owner","/cart/:owner","/card/charge/:owner"],(req,res,next)=>{
+		const { owner } = req.params;
+		const cart = database.carts.find(cart=>cart.owner === owner);
+		if (!cart){
+			return res
+				.status(404)
+				.json({error:"No cart with the specified owner",owner});
+		}
+		else {
+			req.cart = cart;
+			next();
+		}
+	});
+	
+	app.get("/cart/validate/:owner",(req,res)=>{
+		const { items } = req.cart;		
+		let validated = true;
+		let error = null;
+		items.forEach(({id,quantity})=>{
+			const item = database.items.find(item => item.id === id);
+			if (item.quantityAvailable < quantity) {
+				validated = false;
+				error = "There is an insufficient quantity of " + id;
+			}
+		});;
+		res
+			.status(200)
+			.json({validated,error});
+		
+	});
+	
+	
+	app.get("/cart/:owner",(req,res)=>{
+		const cart = req.cart;
+		res
+			.status(200)
+			.json(cart);
+		
+	});
+	
+	app.use(["/card/validate/:owner","/card/charge/:owner"],(req,res, next)=>{
+		const {owner} = req.params;
+		const card = database.cards.find(card=>card.owner === owner);
+		if (!card){
+			res.status(500).send({error:`No card is available for user ${owner}`});
+		}
+		req.card = card;
+		next();
+	});
+	
+	app.get("/card/validate/:owner",(req,res)=>{
+		const {card} = req;
+		res
+		.status(200)
+		.json({validated:true});
+	});
+	
+	app.get("/card/charge/:owner",(req,res)=>{
+		const {card, cart} = req;
+		const { owner } = req.params;
+		const country = database.users.find(user=>user.id === owner).country;
+		const total = cart.items.reduce((total,{quantity,id})=>{
+			const item = database.items.find(item=>item.id === id);
+			const symbol = country === "CAD" ? "cad" : "usd";
+			const baseValue = item[symbol];
+			total += baseValue * quantity;
+			return total;
+		},0);
+		
+		if (card.availableFunds <= total) {
+			return res
+				.status(402)
+				.json({success:false});
+		}
+		
+		card.availableFunds -= total;
+		res
+			.status(201)
+			.send({success:true});	
+			
+		
+	});
+	
+
+    
 
     app.get("/items/:ids",(req,res)=>{
         const ids = req.params.ids.split(',');
@@ -179,16 +222,6 @@ nativeObject = YAML.load('database.yml',(database)=>{
                     price:symbol === "USD" ? item.usd : item.cad
                 })));
         }
-    });
-
-    app.get('/checkout/:owner',(req,res)=>{
-       const { owner } = req.params;
-       res.
-           status(405)
-           .json({
-               error:"Route not implemented",
-               owner
-           })
     });
 
     app.get('/shipping/:items',(req,res)=>{

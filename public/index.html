@@ -141,6 +141,19 @@
     </tr>
 	<tr>
         <td>
+            Card (Validate)
+        </td>
+        <td>
+            <a href="/card/validate/U10000">
+                /card/validate/:owner
+            </a>
+        </td>
+        <td>
+            Validates the owner's credit card - always returns {validated:true}
+        </td>
+    </tr>
+	<tr>
+        <td>
             Cart (Validate)
         </td>
         <td>
@@ -150,6 +163,19 @@
         </td>
         <td>
             Validates the cart - returns {validated:true} if all cart items are in stock
+        </td>
+    </tr>
+	<tr>
+        <td>
+            Card (charge)
+        </td>
+        <td>
+            <a href="/card/charge/U10000">
+                /cart/charge/:owner
+            </a>
+        </td>
+        <td>
+            Charges the user and purchases all items. Returns { success: true } if sufficient funds were available.
         </td>
     </tr>
     <tr>
