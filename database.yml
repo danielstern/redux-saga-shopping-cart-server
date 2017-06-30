@@ -2,9 +2,13 @@ users:
 - id: U10000
   name: J.R.R Hemingway
   country: CAD
-  card: C10000
   address1: 555 La Floridita Way
   phone: 15551234567
+  
+- id: U20000
+  name: George R. R. Rowling
+  country: USD
+  address1: 14 Diagon Alley
 
 cards:
 - id: C10000
@@ -20,6 +24,11 @@ carts:
   - id: I20000
     quantity: 1
   - id: I40000
+    quantity: 3
+    
+- owner: U20000
+  items:
+  - id: I50000
     quantity: 3
 
 items:

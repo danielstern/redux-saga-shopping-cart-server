@@ -32,7 +32,7 @@ nativeObject = YAML.load('database.yml',(database)=>{
         }
     });
 	
-	app.get("/cart/:owner",(req,res)=>{
+	app.use(["/cart/validate/:owner","/cart/:owner"],(req,res,next)=>{
 		const { owner } = req.params;
 		const cart = database.carts.find(cart=>cart.owner === owner);
 		if (!cart){
@@ -41,11 +41,39 @@ nativeObject = YAML.load('database.yml',(database)=>{
 				.json({error:"No cart with the specified owner",owner});
 		}
 		else {
-			res
-				.status(200)
-				.json(cart);
+			console.log("Cart middleware...",cart);
+			req.cart = cart;
+			next();
 		}
 	});
+	
+	app.get("/cart/validate/:owner",(req,res)=>{
+		const { items } = req.cart;		
+		let validated = true;
+		let error = null;
+		console.log("validating cart...",items,database);
+		items.forEach(({id,quantity})=>{
+			const item = database.items.find(item => item.id === id);
+			if (item.quantityAvailable < quantity) {
+				validated = false;
+				error = "There is an insufficient quantity of " + id;
+			}
+		});;
+		res
+			.status(200)
+			.json({validated,error});
+		
+	});
+	
+	
+	app.get("/cart/:owner",(req,res)=>{
+		const cart = req.cart;
+		res
+			.status(200)
+			.json(cart);
+		
+	});
+	
 
     const makeCartAdjustmentRoute = (shouldAdd = true) => (req,res)=>{
         const { owner, itemID } = req.params;
@@ -119,12 +147,6 @@ nativeObject = YAML.load('database.yml',(database)=>{
         } else {
             res
                 .status(200)
-                //.json(items.map(item=>({
-                //    id: item.id,
-                //    description:item.description,
-                //    name: item.name,
-                //    img: item.img
-                //})));
 				.json(items);
         }
     });

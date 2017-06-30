@@ -47,7 +47,7 @@
             </a>
         </td>
         <td>
-            Returns all items in user's cart, or an error if no cart exists.
+            Returns all items in user's cart, or an error if no cart exists.	
         </td>
     </tr>
     <tr>
@@ -137,6 +137,19 @@
         </td>
         <td>
             Purchases all the items in the cart, or purchases none of the items in the cart if any errors occur.
+        </td>
+    </tr>
+	<tr>
+        <td>
+            Cart (Validate)
+        </td>
+        <td>
+            <a href="/cart/validate/U10000">
+                /cart/validate/:owner
+            </a>
+        </td>
+        <td>
+            Validates the cart - returns {validated:true} if all cart items are in stock
         </td>
     </tr>
     <tr>
