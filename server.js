@@ -14,7 +14,7 @@ app.use((req,res,next)=>{
 app.use(express.static('public'));
 
 nativeObject = YAML.load('database.yml',(database)=>{
-	
+
 	const makeCartAdjustmentRoute = (shouldAdd = true) => (req,res)=>{
         const { owner, itemID } = req.params;
         const cart = database.carts.find(cart=>cart.owner === owner);
@@ -38,7 +38,7 @@ nativeObject = YAML.load('database.yml',(database)=>{
                 })
         }
 
-	
+
         const existingItem = cart.items.find(cartItem=>cartItem.id === itemID);
         if (existingItem) {
 			if (shouldAdd && parseInt(existingItem.quantity) >= parseInt(item.quantityAvailable)) {
@@ -76,7 +76,7 @@ nativeObject = YAML.load('database.yml',(database)=>{
 
     app.get("/cart/add/:owner/:itemID",makeCartAdjustmentRoute(true));
     app.get("/cart/remove/:owner/:itemID",makeCartAdjustmentRoute(false));
-   
+
     app.get("/user/:id",(req,res)=>{
         const id = req.params.id;
         const user = database.users.find(user=>user.id === id);
@@ -93,7 +93,7 @@ nativeObject = YAML.load('database.yml',(database)=>{
                 .json(user)
         }
     });
-	
+
 	app.use(["/cart/validate/:owner","/cart/:owner","/card/charge/:owner"],(req,res,next)=>{
 		const { owner } = req.params;
 		const cart = database.carts.find(cart=>cart.owner === owner);
@@ -107,9 +107,9 @@ nativeObject = YAML.load('database.yml',(database)=>{
 			next();
 		}
 	});
-	
+
 	app.get("/cart/validate/:owner",(req,res)=>{
-		const { items } = req.cart;		
+		const { items } = req.cart;
 		let validated = true;
 		let error = null;
 		items.forEach(({id,quantity})=>{
@@ -122,18 +122,18 @@ nativeObject = YAML.load('database.yml',(database)=>{
 		res
 			.status(200)
 			.json({validated,error});
-		
+
 	});
-	
-	
+
+
 	app.get("/cart/:owner",(req,res)=>{
 		const cart = req.cart;
 		res
 			.status(200)
 			.json(cart);
-		
+
 	});
-	
+
 	app.use(["/card/validate/:owner","/card/charge/:owner"],(req,res, next)=>{
 		const {owner} = req.params;
 		const card = database.cards.find(card=>card.owner === owner);
@@ -143,14 +143,14 @@ nativeObject = YAML.load('database.yml',(database)=>{
 		req.card = card;
 		next();
 	});
-	
+
 	app.get("/card/validate/:owner",(req,res)=>{
 		const {card} = req;
 		res
 		.status(200)
 		.json({validated:true});
 	});
-	
+
 	app.get("/card/charge/:owner",(req,res)=>{
 		const {card, cart} = req;
 		const { owner } = req.params;
@@ -162,23 +162,23 @@ nativeObject = YAML.load('database.yml',(database)=>{
 			total += baseValue * quantity;
 			return total;
 		},0);
-		
+
 		if (card.availableFunds <= total) {
 			return res
 				.status(402)
 				.json({success:false});
 		}
-		
+
 		card.availableFunds -= total;
 		res
 			.status(201)
-			.send({success:true});	
-			
-		
-	});
-	
+			.send({success:true});
 
-    
+
+	});
+
+
+
 
     app.get("/items/:ids",(req,res)=>{
         const ids = req.params.ids.split(',');
@@ -224,8 +224,8 @@ nativeObject = YAML.load('database.yml',(database)=>{
         }
     });
 
-    app.get('/shipping/:items',(req,res)=>{
-        const ids = req.params.items.split(',');
+    app.get('/shipping/:items?',(req,res)=>{
+        const ids = req.params.items ? req.params.items.split(',') : [];
         let total = 0;
         ids.forEach(id=>{
             const item = database.items.find(item=>item.id === id);
